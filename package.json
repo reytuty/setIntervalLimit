@@ -1,6 +1,6 @@
 {
   "name": "setinterval-limit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "If you need call method repeatedly but you need avoid over called. You can configure to called just if change and/or called just if is called to call (every interval or every called but in minimal setted interval)",
   "main": "index.js",
   "scripts": {
