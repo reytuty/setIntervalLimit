@@ -15,6 +15,7 @@ function IntervalLimit(_callback, _maxFrequence, _justIfCalled, _ifChange = fals
     let hasFrequence = (maxFrequence > 0) ;
     let intervalId ;
     let started = false ;
+    let needBeSend ;
     this.call = (...arguments)=>{
         var args = Array.from( arguments ) ;
         if(args.length > 0){
