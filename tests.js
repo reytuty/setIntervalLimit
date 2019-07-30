@@ -5,7 +5,7 @@ const setIntervalLimit = require("./index")
 var callJustIfCalled = false ;
 var justIfChange = false ;
 var intervalLimit1 = setIntervalLimit((param1, param2, param3)=>{
-    console.log("1 - called 1 again", new Date(), param1, param2, param3)  ;
+    //console.log("1 - called 1 again", new Date(), param1, param2, param3)  ;
 }, 1000, callJustIfCalled, justIfChange ) ;
 intervalLimit1.start() ;
 
@@ -25,3 +25,15 @@ setInterval(()=>{
     intervalLimit1.call( roundSum, 2 ) ;
     intervalLimit2.call( roundSum,2,3) ;
 }, 20);
+
+
+//or you can use call with context
+
+setInterval(()=>{
+    sum += 0.1;
+    var roundSum = Math.floor(sum) ;
+    console.log("trying to sent for 2 diferent contexts", roundSum) ;
+    intervalLimit2.contextCall( "myContext_1", [ roundSum, 2 ] ) ;
+    intervalLimit2.contextCall( "myContext_2", [ roundSum, 3 ] ) ;
+    intervalLimit2.contextCall( "myContext_3", [ 2, 3 ] ) ;
+}, 200);

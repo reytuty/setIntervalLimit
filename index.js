@@ -7,36 +7,53 @@ function IntervalLimit(_callback, _maxFrequence, _justIfCalled, _ifChange = fals
         //method string name of method, called method
         callback = eval( callback.split(" ").join("") ) ;
     }
-    let lastArguments ;
-    let lastArgumentsString = "";
-    let lastSentArguments ; 
+    let lastArguments = new Map();
+    let lastArgumentsString = new Map();
+    let lastSentArguments = new Map(); 
+    
     let justIfCalled = _justIfCalled ;
     let ifChange = ( _ifChange == true ) ;
     let hasFrequence = (maxFrequence > 0) ;
     let intervalId ;
     let started = false ;
-    let needBeSend ;
-    this.call = (...arguments)=>{
-        var args = Array.from( arguments ) ;
+    let needBeSend = new Map() ;
+    this.defaultContext = "_____1";
+    lastArguments.set( me.defaultContext, null );
+    this.contextCall = (context, args)=>{
         if(args.length > 0){
-            lastArgumentsString = JSON.stringify( args ) ;
+            lastArgumentsString.set(context, JSON.stringify( args ) ) ;
         }
-        lastArguments = args ;
-        needBeSend = true ;
+        lastArguments.set( context, args ) ;
+        needBeSend.set(context, true ) ;
         if( ! hasFrequence ){
-            doCall();
+            doCall( context );
         }
     }
-    function doCall(){
-        if( justIfCalled && !needBeSend ) {
+    this.call = (...arguments)=>{
+        var args = Array.from( arguments ) ;
+        return me.contextCall( me.defaultContext, args ) ;
+    }
+    function doCall( context = null ){
+        if(!context){
+            context = me.defaultContext
+        }
+        if( justIfCalled && !needBeSend.get(context) ) {
             return;
         }
-        if(ifChange && lastSentArguments == lastArgumentsString){
+        var lastArgString = lastArgumentsString.get(context) ;
+        var lastArg = lastArguments.get( context ) ;
+        var lastSentArgs = lastSentArguments.get(context);
+        if( ifChange && lastSentArgs == lastArgString ){
             //checking for changes
             return ;
         }
-        lastSentArguments = JSON.stringify( lastArguments ) ;
-        callback.apply( null, lastArguments ) ;
+        lastSentArguments.set( context, JSON.stringify( lastArg ) ) ;
+        callback.apply( null, lastArg ) ;
+    }
+    function doCall4All(){
+        lastArguments.forEach((value, key)=>{
+            doCall(key) ;
+        });
     }
     this.start = ()=>{
         if(started){
@@ -46,7 +63,7 @@ function IntervalLimit(_callback, _maxFrequence, _justIfCalled, _ifChange = fals
         started = true ;
         if( hasFrequence ){
             intervalId = setInterval(()=>{
-                doCall() ;
+                doCall4All() ;
             }, maxFrequence) ;
         }
     }

@@ -40,5 +40,16 @@ setInterval(()=>{
     intervalLimit2.call( roundSum,2,3) ;
 }, 20);
 
+//or you can use call with context
+
+setInterval(()=>{
+    sum += 0.01;
+    var roundSum = Math.floor(sum) ;
+    console.log("trying to sent for 2 diferent contexts", roundSum) ;
+    intervalLimit2.contextCall( "myContext_1", [ roundSum, 2 ] ) ;
+    //even if the message is different, but for that context, it is the same, so, just sent when realy change for context.
+    intervalLimit2.contextCall( "myContext_2", [ roundSum, 3 ] ) ;
+}, 20);
 
 ```
+
